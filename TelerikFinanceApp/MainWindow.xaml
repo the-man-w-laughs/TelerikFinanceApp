@@ -1,0 +1,30 @@
+﻿<Window x:Class="TelerikFinanceApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+        Title="MainWindow" WindowState="Maximized">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height ="auto"></RowDefinition>
+            <RowDefinition Height ="*"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+            <telerik:RadButton Content="Load currencies" Command="{Binding ClickCommand}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <telerik:RadButton Content="Save to JSON" Command="{Binding SaveToJsonCommand}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <telerik:RadButton Content="Load from JSON" Command="{Binding LoadFromJsonCommand}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <telerik:RadGridView x:Name="gridView" AutoGenerateColumns="False" Grid.Row="1" ItemsSource="{Binding Currencies}" SelectedItem="{Binding SelectedRate}">
+            <telerik:RadGridView.Columns>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Date}" Header="Date"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Cur_Abbreviation}" Header="Abbreviation"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Cur_Name}" Header="Name"/>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Cur_OfficialRate}" Header="Official Rate"/>
+            </telerik:RadGridView.Columns>
+        </telerik:RadGridView>
+
+    </Grid>
+
+</Window>
