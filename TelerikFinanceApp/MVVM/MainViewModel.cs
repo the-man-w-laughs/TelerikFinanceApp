@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace FinanceApp.MVVM
@@ -65,12 +66,19 @@ namespace FinanceApp.MVVM
         // Event handler when a currency rate is selected.
         private async Task OnRateSelected()
         {
-            var rateId = SelectedRate.Cur_ID;
-            DateTime today = DateTime.Now;
-            DateTime lastYear = today.AddYears(-1);
+            try
+            {
+                var rateId = SelectedRate.Cur_ID;
+                DateTime today = DateTime.Now;
+                DateTime lastYear = today.AddYears(-1);
 
-            // Load and update rates for the selected currency for the past year.
-            Rates = await _currencyLoaderService.GetRatesDynamicsAsync(rateId, lastYear, today);
+                // Load and update rates for the selected currency for the past year.
+                Rates = await _currencyLoaderService.GetRatesDynamicsAsync(rateId, lastYear, today);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessageBox("Error", $"An error occurred in OnRateSelected: {ex.Message}");
+            }
         }
 
         // Command to execute when the "Load currencies" button is clicked.
@@ -87,7 +95,7 @@ namespace FinanceApp.MVVM
         
         public MainViewModel(ICurrencyLoaderService currencyLoaderService)
         {
-            ClickCommand = new RelayCommand(ExecuteClick);
+            ClickCommand = new RelayCommand(ExecuteLoadCurrenciesClick);
             SaveToJsonCommand = new RelayCommand(SaveToJson);
             LoadFromJsonCommand = new RelayCommand(LoadFromJson);
             _currencyLoaderService = currencyLoaderService;
@@ -96,44 +104,70 @@ namespace FinanceApp.MVVM
         // Save currencies data to a JSON file.
         private void SaveToJson(object parameter)
         {
-            var saveFileDialog = new SaveFileDialog
+            try
             {
-                Filter = "JSON files (*.json)|*.json",
-                Title = "Save Currencies Data",
-                DefaultExt = "json"
-            };
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "JSON files (*.json)|*.json",
+                    Title = "Save Currencies Data",
+                    DefaultExt = "json"
+                };
 
-            if (saveFileDialog.ShowDialog() == true)
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    // Serialize and save the currencies data to the selected file.
+                    string json = JsonConvert.SerializeObject(Currencies);
+                    File.WriteAllText(saveFileDialog.FileName, json);
+                }
+            }
+            catch (Exception ex)
             {
-                // Serialize and save the currencies data to the selected file.
-                string json = JsonConvert.SerializeObject(Currencies);
-                File.WriteAllText(saveFileDialog.FileName, json);
+                ShowErrorMessageBox("Error", $"An error occurred in SaveToJson: {ex.Message}");
             }
         }
 
         // Load currencies data from a JSON file.
         private void LoadFromJson(object parameter)
         {
-            var openFileDialog = new OpenFileDialog
+            try
             {
-                Filter = "JSON files (*.json)|*.json",
-                Title = "Load Currencies Data"
-            };
+                var openFileDialog = new OpenFileDialog
+                {
+                    Filter = "JSON files (*.json)|*.json",
+                    Title = "Load Currencies Data"
+                };
 
-            if (openFileDialog.ShowDialog() == true)
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    // Deserialize and update the currencies collection from the selected file.
+                    string json = File.ReadAllText(openFileDialog.FileName);
+                    Currencies = JsonConvert.DeserializeObject<ObservableCollection<Rate>>(json);
+                }
+            }
+            catch (Exception ex)
             {
-                // Deserialize and update the currencies collection from the selected file.
-                string json = File.ReadAllText(openFileDialog.FileName);
-                Currencies = JsonConvert.DeserializeObject<ObservableCollection<Rate>>(json);                
+                ShowErrorMessageBox("Error", $"An error occurred in LoadFromJson: {ex.Message}");
             }
         }
 
         // Event handler for "Load currencies" button click.
-        private async void ExecuteClick(object parameter)
+        private async void ExecuteLoadCurrenciesClick(object parameter)
         {
-            // Load and update the currencies collection from the official rates API.
-            var allData = await _currencyLoaderService.GetOfficialRatesAsync();
-            Currencies = new ObservableCollection<Rate>(allData);
+            try
+            {
+                // Load and update the currencies collection from the official rates API.
+                var allData = await _currencyLoaderService.GetOfficialRatesAsync();
+                Currencies = new ObservableCollection<Rate>(allData);                
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessageBox("Error", $"An error occurred in ExecuteClick: {ex.Message}");
+            }
+        }
+
+        private void ShowErrorMessageBox(string title, string message)
+        {
+            MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         // INotifyPropertyChanged event.
