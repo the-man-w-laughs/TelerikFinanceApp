@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -34,7 +35,7 @@ namespace FinanceApp.MVVM
         private Rate _selectedRate;
         public Rate SelectedRate
         {
-            get { return _selectedRate; }
+            get { return _selectedRate ?? _rates.FirstOrDefault(); }
             set
             {
                 if (_selectedRate != value)
@@ -64,7 +65,7 @@ namespace FinanceApp.MVVM
         // Event handler when a currency rate is selected.
         private async Task OnRateSelected()
         {
-            var rateId = _selectedRate.Cur_ID;
+            var rateId = SelectedRate.Cur_ID;
             DateTime today = DateTime.Now;
             DateTime lastYear = today.AddYears(-1);
 
@@ -123,7 +124,7 @@ namespace FinanceApp.MVVM
             {
                 // Deserialize and update the currencies collection from the selected file.
                 string json = File.ReadAllText(openFileDialog.FileName);
-                Currencies = JsonConvert.DeserializeObject<ObservableCollection<Rate>>(json);
+                Currencies = JsonConvert.DeserializeObject<ObservableCollection<Rate>>(json);                
             }
         }
 
