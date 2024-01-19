@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using NbrbAPI.Models;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -29,6 +30,16 @@ namespace Services
             string apiUrl = $"{OfficialRatesApiUrl}?periodicity={periodicity}";
             string jsonResult = await _httpClient.GetStringAsync(apiUrl);
             return JsonConvert.DeserializeObject<List<Rate>>(jsonResult);
+        }
+
+        public async Task<List<Rate>> GetRatesDynamicsAsync(int curId, DateTime startDate, DateTime endDate)
+        {
+            string apiUrl = $"https://api.nbrb.by/exrates/rates/dynamics/{curId}?startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}";
+            string jsonResult = await _httpClient.GetStringAsync(apiUrl);
+
+            List<Rate> rates = JsonConvert.DeserializeObject<List<Rate>>(jsonResult);
+
+            return rates;
         }
     }
 }

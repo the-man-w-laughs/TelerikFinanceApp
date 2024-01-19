@@ -16,14 +16,33 @@
             <telerik:RadButton Content="Load from JSON" Command="{Binding LoadFromJsonCommand}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </StackPanel>
 
-        <telerik:RadGridView x:Name="gridView" AutoGenerateColumns="False" Grid.Row="1" ItemsSource="{Binding Currencies}" SelectedItem="{Binding SelectedRate}">
-            <telerik:RadGridView.Columns>
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding Date}" Header="Date"/>
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding Cur_Abbreviation}" Header="Abbreviation"/>
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding Cur_Name}" Header="Name"/>
-                <telerik:GridViewDataColumn DataMemberBinding="{Binding Cur_OfficialRate}" Header="Official Rate"/>
-            </telerik:RadGridView.Columns>
-        </telerik:RadGridView>
+        <!-- Main Layout -->
+        <DockPanel Grid.Row="1">
+
+            <!-- RadGridView -->
+            <telerik:RadGridView x:Name="gridView" AutoGenerateColumns="False" DockPanel.Dock="Left" ItemsSource="{Binding Currencies}" SelectedItem="{Binding SelectedRate}">
+                <telerik:RadGridView.Columns>
+                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Date}" Header="Date"/>
+                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Cur_Abbreviation}" Header="Abbreviation"/>
+                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Cur_Name}" Header="Name"/>
+                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Cur_OfficialRate}" Header="Official Rate"/>
+                </telerik:RadGridView.Columns>
+            </telerik:RadGridView>
+
+            <telerik:RadCartesianChart Visibility="Visible">
+                <telerik:RadCartesianChart.HorizontalAxis>
+                    <telerik:DateTimeContinuousAxis MajorStepUnit="Month" MajorStep="3">
+                    </telerik:DateTimeContinuousAxis>
+                </telerik:RadCartesianChart.HorizontalAxis>
+                <telerik:RadCartesianChart.VerticalAxis>
+                    <telerik:LinearAxis />
+                </telerik:RadCartesianChart.VerticalAxis>
+
+                <telerik:LineSeries ItemsSource="{Binding Rates}" ValueBinding="Cur_OfficialRate" CategoryBinding="Date" />
+            </telerik:RadCartesianChart>
+
+
+        </DockPanel>
 
     </Grid>
 

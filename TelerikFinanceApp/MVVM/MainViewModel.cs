@@ -2,10 +2,13 @@
 using Microsoft.Win32;
 using NbrbAPI.Models;
 using Newtonsoft.Json;
+using Services;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace FinanceApp.MVVM
@@ -41,9 +44,28 @@ namespace FinanceApp.MVVM
             }
         }
 
-        private void OnRateSelected()
+        private List<Rate> _rates;
+
+        public List<Rate> Rates
         {
-            throw new NotImplementedException();
+            get { return _rates; }
+            set
+            {
+                if (_rates != value)
+                {
+                    _rates = value;
+                    OnPropertyChanged(nameof(Rates));
+                }
+            }
+        }
+
+        private async Task OnRateSelected()
+        {
+            var rateId = _selectedRate.Cur_ID;
+            DateTime today = DateTime.Now;
+            DateTime lastYear = today.AddYears(-1);
+
+            Rates = await _currencyLoaderService.GetRatesDynamicsAsync(rateId, lastYear, today);            
         }
 
         public ICommand ClickCommand { get; }
