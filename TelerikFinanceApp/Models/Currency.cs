@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NbrbAPI.Models
 {
+    // Represents a currency entity with details obtained from the National Bank of the Republic of Belarus API.
     public class Currency
     {
         [Key]

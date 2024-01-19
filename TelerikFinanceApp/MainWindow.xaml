@@ -15,11 +15,9 @@
             <telerik:RadButton Content="Save to JSON" Command="{Binding SaveToJsonCommand}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <telerik:RadButton Content="Load from JSON" Command="{Binding LoadFromJsonCommand}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </StackPanel>
-
-        <!-- Main Layout -->
+        
         <DockPanel Grid.Row="1">
-
-            <!-- RadGridView -->
+            
             <telerik:RadGridView x:Name="gridView" AutoGenerateColumns="False" DockPanel.Dock="Left" ItemsSource="{Binding Currencies}" SelectedItem="{Binding SelectedRate}">
                 <telerik:RadGridView.Columns>
                     <telerik:GridViewDataColumn DataMemberBinding="{Binding Date}" Header="Date"/>

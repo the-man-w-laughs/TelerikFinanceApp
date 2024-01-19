@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NbrbAPI.Models
 {
+    // Represents a rate entity with details obtained from the National Bank of the Republic of Belarus API.
     public class Rate
     {
         [Key]
@@ -13,7 +14,4 @@ namespace NbrbAPI.Models
         public string Cur_Name { get; set; }
         public decimal? Cur_OfficialRate { get; set; }
     }
-
-
-
 }

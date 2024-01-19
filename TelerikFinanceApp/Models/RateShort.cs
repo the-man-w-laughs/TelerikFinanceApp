@@ -2,6 +2,7 @@
 
 namespace NbrbAPI.Models
 {
+    // Represents a short rate entity with details obtained from the National Bank of the Republic of Belarus API.
     public class RateShort
     {
         public int Cur_ID { get; set; }
