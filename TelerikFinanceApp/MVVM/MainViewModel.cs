@@ -45,7 +45,7 @@ namespace FinanceApp.MVVM
                 {
                     _selectedRate = value;
                     OnPropertyChanged(nameof(SelectedRate));
-                    Task.Run(() => OnRateSelected()); 
+                    Task.Run(() => LoadRatesDynamic());
                 }
             }
         }
@@ -65,8 +65,7 @@ namespace FinanceApp.MVVM
             }
         }
 
-        // Event handler when a currency rate is selected.
-        private async Task OnRateSelected()
+        private async Task LoadRatesDynamic()
         {
             try
             {
@@ -74,9 +73,10 @@ namespace FinanceApp.MVVM
                 // Load and update rates for the selected currency for the past year.
                 Rates = await _currencyLoaderService.GetRatesDynamicsAsync(rateId, StartDate, EndDate);
             }
-            catch (Exception ex)
+
+             catch (Exception ex)
             {
-                ShowErrorMessageBox("Error", $"An error occurred in OnRateSelected: {ex.Message}");
+                ShowErrorMessageBox("Error", $"An error occurred in LoadRatesDynamic: {ex.Message}");
             }
         }
 
@@ -106,6 +106,7 @@ namespace FinanceApp.MVVM
                 {
                     _startDate = value;
                     UpdateChartSettings();
+                    Task.Run(() => LoadRatesDynamic());
                     OnPropertyChanged(nameof(StartDate));
                 }
             }
@@ -125,12 +126,13 @@ namespace FinanceApp.MVVM
                 {
                     _endDate = value;
                     UpdateChartSettings();
+                    Task.Run(() => LoadRatesDynamic());                    
                     OnPropertyChanged(nameof(EndDate));
                 }
             }
         }
 
-        private string _chartMajorStepUnit = "Month";
+        private string _chartMajorStepUnit;
         public string ChartMajorStepUnit
         {
             get { return _chartMajorStepUnit; }
@@ -144,7 +146,7 @@ namespace FinanceApp.MVVM
             }
         }
 
-        private int _chartMajorStep = 3; // Default to 3 months
+        private int _chartMajorStep;
         public int ChartMajorStep
         {
             get { return _chartMajorStep; }
@@ -169,6 +171,7 @@ namespace FinanceApp.MVVM
             SaveToJsonCommand = new RelayCommand(SaveToJson);
             LoadFromJsonCommand = new RelayCommand(LoadFromJson);
             _currencyLoaderService = currencyLoaderService;
+            UpdateChartSettings();
         }
 
         // Save currencies data to a JSON file.
