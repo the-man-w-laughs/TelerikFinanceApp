@@ -22,23 +22,23 @@ public class CurrencyLoaderService : ICurrencyLoaderService
 
     public async Task<List<Currency>> GetCurrenciesAsync()
     {
-        string jsonResult = await _httpClient.GetStringAsync(CurrenciesApiUrl);
+        var jsonResult = await _httpClient.GetStringAsync(CurrenciesApiUrl);
         return JsonConvert.DeserializeObject<List<Currency>>(jsonResult);
     }
 
     public async Task<List<Rate>> GetOfficialRatesAsync(int periodicity = 0)
     {
-        string apiUrl = $"{OfficialRatesApiUrl}?periodicity={periodicity}";
-        string jsonResult = await _httpClient.GetStringAsync(apiUrl);
+        var apiUrl = $"{OfficialRatesApiUrl}?periodicity={periodicity}";
+        var jsonResult = await _httpClient.GetStringAsync(apiUrl);
         return JsonConvert.DeserializeObject<List<Rate>>(jsonResult);
     }
 
-    public async Task<List<Rate>> GetRatesDynamicsAsync(int curId, DateTime startDate, DateTime endDate)
+    public async Task<List<RateShort>> GetRatesDynamicsAsync(int curId, DateTime startDate, DateTime endDate)
     {
-        string apiUrl = $"https://api.nbrb.by/exrates/rates/dynamics/{curId}?startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}";
-        string jsonResult = await _httpClient.GetStringAsync(apiUrl);
+        var apiUrl = $"https://api.nbrb.by/exrates/rates/dynamics/{curId}?startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}";
+        var jsonResult = await _httpClient.GetStringAsync(apiUrl);
 
-        List<Rate> rates = JsonConvert.DeserializeObject<List<Rate>>(jsonResult);
+        var rates = JsonConvert.DeserializeObject<List<RateShort>>(jsonResult);
 
         return rates;
     }

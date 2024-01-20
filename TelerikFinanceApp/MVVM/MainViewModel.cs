@@ -12,14 +12,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using TelerikFinanceApp.Models;
 
 namespace FinanceApp.MVVM
 {
     public class MainViewModel : INotifyPropertyChanged
     {
         // Collection of currency rates displayed in the grid.
-        private ObservableCollection<Rate> _currencies;
-        public ObservableCollection<Rate> Currencies
+        private ObservableCollection<CurrencyToDisplay> _currencies;
+        public ObservableCollection<CurrencyToDisplay> Currencies
         {
             get { return _currencies; }
             set
@@ -33,10 +34,10 @@ namespace FinanceApp.MVVM
         }
 
         // Currently selected currency rate in the grid.
-        private Rate _selectedRate;
-        public Rate SelectedRate
+        private CurrencyToDisplay _selectedRate;
+        public CurrencyToDisplay SelectedRate
         {
-            get { return _selectedRate ?? _rates.FirstOrDefault(); }
+            get { return _selectedRate ?? _currencies.FirstOrDefault(); }
             set
             {
                 if (_selectedRate != value)
@@ -49,8 +50,8 @@ namespace FinanceApp.MVVM
         }
 
         // List of currency rates used for chart data.
-        private List<Rate> _rates;
-        public List<Rate> Rates
+        private List<RateShort> _rates;
+        public List<RateShort> Rates
         {
             get { return _rates; }
             set
@@ -141,7 +142,7 @@ namespace FinanceApp.MVVM
                 {
                     // Deserialize and update the currencies collection from the selected file.
                     string json = File.ReadAllText(openFileDialog.FileName);
-                    Currencies = JsonConvert.DeserializeObject<ObservableCollection<Rate>>(json);
+                    Currencies = JsonConvert.DeserializeObject<ObservableCollection<CurrencyToDisplay>>(json);
                 }
             }
             catch (Exception ex)
@@ -156,8 +157,24 @@ namespace FinanceApp.MVVM
             try
             {
                 // Load and update the currencies collection from the official rates API.
-                var allData = await _currencyLoaderService.GetOfficialRatesAsync();
-                Currencies = new ObservableCollection<Rate>(allData);                
+                var allCurrencies = await _currencyLoaderService.GetCurrenciesAsync();
+                var allRates = await _currencyLoaderService.GetOfficialRatesAsync();
+
+                var currenciesToDisplay = new ObservableCollection<CurrencyToDisplay>();
+
+                foreach (var currency in allCurrencies)
+                {
+                    var currRate = allRates.Find(rate => rate.Cur_ID == currency.Cur_ID);
+                    currenciesToDisplay.Add(new CurrencyToDisplay() {
+                        Cur_ID = currency.Cur_ID,
+                        Cur_Abbreviation = currency.Cur_Abbreviation,
+                        Cur_Name = currency.Cur_Name,
+                        Date = currRate?.Date,
+                        Cur_OfficialRate = currRate?.Cur_OfficialRate
+                    });
+                }
+
+                Currencies = currenciesToDisplay;
             }
             catch (Exception ex)
             {

@@ -85,6 +85,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Contracts\ICurrencyLoaderService.cs" />
+    <Compile Include="Models\CurrencyToDisplay.cs" />
     <Compile Include="Services\CurrencyLoaderService.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

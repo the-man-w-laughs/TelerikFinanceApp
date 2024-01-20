@@ -22,6 +22,6 @@ namespace Contracts
         //   startDate: The start date of the range.
         //   endDate: The end date of the range.
         // Returns: A list of Rate objects representing the rate dynamics.
-        Task<List<Rate>> GetRatesDynamicsAsync(int curId, System.DateTime startDate, System.DateTime endDate);
+        Task<List<RateShort>> GetRatesDynamicsAsync(int curId, System.DateTime startDate, System.DateTime endDate);
     }
 }
