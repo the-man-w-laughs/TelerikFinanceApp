@@ -3,22 +3,27 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
         Title="MainWindow" WindowState="Maximized">
-
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height ="auto"></RowDefinition>
-            <RowDefinition Height ="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal">
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
             <telerik:RadButton Content="Load currencies" Command="{Binding ClickCommand}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <telerik:RadButton Content="Save to JSON" Command="{Binding SaveToJsonCommand}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <telerik:RadButton Content="Load from JSON" Command="{Binding LoadFromJsonCommand}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+            <TextBlock Text="Start Date:" Margin="5"/>
+            <DatePicker SelectedDate="{Binding StartDate}" Margin="5"/>
+
+            <TextBlock Text="End Date:" Margin="5"/>
+            <DatePicker SelectedDate="{Binding EndDate}" Margin="5"/>
         </StackPanel>
-        
+
         <DockPanel Grid.Row="1">
-            
-            <telerik:RadGridView x:Name="gridView" AutoGenerateColumns="False" DockPanel.Dock="Left" ItemsSource="{Binding Currencies}" SelectedItem="{Binding SelectedRate}">
+
+            <telerik:RadGridView x:Name="gridView" AutoGenerateColumns="False" DockPanel.Dock="Left" ItemsSource="{Binding CurrenciesToDisplay}" SelectedItem="{Binding SelectedRate}">
                 <telerik:RadGridView.Columns>
                     <telerik:GridViewDataColumn DataMemberBinding="{Binding Date}" Header="Date"/>
                     <telerik:GridViewDataColumn DataMemberBinding="{Binding Cur_Abbreviation}" Header="Abbreviation"/>
@@ -29,7 +34,8 @@
 
             <telerik:RadCartesianChart Visibility="Visible">
                 <telerik:RadCartesianChart.HorizontalAxis>
-                    <telerik:DateTimeContinuousAxis MajorStepUnit="Month" MajorStep="3">
+                    <telerik:DateTimeContinuousAxis MajorStepUnit="{Binding Path=ChartMajorStepUnit}" 
+                                       MajorStep="{Binding Path=ChartMajorStep}" LabelFormat="dd MMM yyyy">
                     </telerik:DateTimeContinuousAxis>
                 </telerik:RadCartesianChart.HorizontalAxis>
                 <telerik:RadCartesianChart.VerticalAxis>
@@ -38,7 +44,6 @@
 
                 <telerik:LineSeries ItemsSource="{Binding Rates}" ValueBinding="Cur_OfficialRate" CategoryBinding="Date" />
             </telerik:RadCartesianChart>
-
 
         </DockPanel>
 
